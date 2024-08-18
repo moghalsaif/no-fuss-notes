@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No Fuss Notes</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .credit {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #ffffff;
+            text-decoration: none;
+            background-color: #000000;
+            padding: 8px 12px;
+            border-radius: 20px;
+            transition: background-color 0.3s ease;
+        }
+        .credit:hover {
+            background-color: #333333;
+        }
+        .credit svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 6px;
+            fill: currentColor;
+        }
+        #notepad {
+            flex-grow: 1;
+            border: none;
+            border-radius: 8px;
+            padding: 20px;
+            font-size: 16px;
+            line-height: 1.6;
+            resize: none;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        #notepad:focus {
+            outline: none;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">no fuss notes</div>
+            <a href="https://x.com/moghalsaifa" target="_blank" class="credit">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <g>
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+                    </g>
+                </svg>
+                built by @moghalsaifa
+            </a>
+        </div>
+        <textarea id="notepad" placeholder="Start typing your notes here..."></textarea>
+    </div>
+
+    <script>
+        const notepad = document.getElementById('notepad');
+
+        // Load saved note from localStorage
+        notepad.value = localStorage.getItem('noFussNote') || '';
+
+        // Save note to localStorage whenever it changes
+        notepad.addEventListener('input', () => {
+            localStorage.setItem('noFussNote', notepad.value);
+        });
+    </script>
+</body>
+</html>
