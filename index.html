@@ -4,7 +4,7 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced No Fuss Notes</title>
+    <title>No Fuss Notes</title>
     <style>
         body, html {
             height: 100%;
@@ -22,54 +22,34 @@
             padding: 20px;
             box-sizing: border-box;
         }
-        .main-content {
-            flex: 3;
+        .editor-panel {
+            width: 200px;
+            background-color: #ffffff;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            padding: 10px;
             display: flex;
             flex-direction: column;
+            gap: 10px;
+            transition: transform 0.3s ease;
         }
-        .sidebar {
-            flex: 1;
-            margin-left: 20px;
-            display: flex;
-            flex-direction: column;
+        .editor-panel.closed {
+            transform: translateX(-220px);
         }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .title {
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .credit {
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-            color: #ffffff;
-            text-decoration: none;
-            background-color: #000000;
-            padding: 8px 12px;
+        .editor-toggle {
+            cursor: pointer;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border: none;
             border-radius: 20px;
+            margin-bottom: 20px;
             transition: background-color 0.3s ease;
         }
-        .credit:hover {
-            background-color: #333333;
-        }
-        .credit svg {
-            width: 16px;
-            height: 16px;
-            margin-right: 6px;
-            fill: currentColor;
-        }
-        .toolbar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
+        .editor-toggle:hover {
+            background-color: #e0e0e0;
         }
         .toolbar button {
-            background-color: #f0f0f0;
+            background-color: #007bff;
+            color: white;
             border: none;
             border-radius: 20px;
             padding: 8px 12px;
@@ -77,7 +57,19 @@
             transition: background-color 0.3s ease;
         }
         .toolbar button:hover {
-            background-color: #e0e0e0;
+            background-color: #0056b3;
+        }
+        .toolbar input, .toolbar select {
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            padding: 5px;
+            width: 100%;
+        }
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            margin-left: 20px;
         }
         #notepad {
             flex-grow: 1;
@@ -96,17 +88,15 @@
             outline: none;
             box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
         }
-        #theme-toggle, #add-sticky-note {
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-            background-color: #f0f0f0;
-            border: none;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
+        .sidebar {
+            width: 200px;
+            background-color: #ffffff;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            transition: transform 0.3s ease;
+        }
+        .sidebar.closed {
+            transform: translateX(220px);
         }
         .sticky-note {
             background-color: #feff9c;
@@ -114,6 +104,7 @@
             padding: 10px;
             margin-bottom: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
         .sticky-note textarea {
             width: 100%;
@@ -122,35 +113,34 @@
             resize: vertical;
             min-height: 100px;
         }
-        #color-picker, #font-size-picker {
-            border-radius: 20px;
+        .delete-note {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: #ff4d4d;
+            color: white;
             border: none;
-            padding: 5px;
+            border-radius: 50%;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        .delete-note:hover {
+            background-color: #cc0000;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <div class="main-content">
-            <div class="header">
-                <div class="title">Enhanced No Fuss Notes</div>
-                <button id="theme-toggle">🌓</button>
-                <a href="https://x.com/moghalsaifa" target="_blank" class="credit">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <g>
-                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
-                        </g>
-                    </svg>
-                    built by @moghalsaifa
-                </a>
-            </div>
+        <div class="editor-panel" id="editor-panel">
+            <button class="editor-toggle" onclick="togglePanel()">☰</button>
             <div class="toolbar">
-                <button onclick="document.execCommand('bold')">B</button>
-                <button onclick="document.execCommand('italic')">I</button>
-                <button onclick="document.execCommand('underline')">U</button>
-                <button onclick="document.execCommand('insertHorizontalRule')">—</button>
-                <button onclick="makeHeading()">H</button>
+                <button onclick="document.execCommand('bold')">Bold</button>
                 <input type="color" id="color-picker" onchange="changeColor(this.value)">
                 <select id="font-size-picker" onchange="changeFontSize(this.value)">
                     <option value="3">Small</option>
@@ -158,40 +148,26 @@
                     <option value="5">Large</option>
                     <option value="6">Extra Large</option>
                 </select>
+                <button onclick="document.execCommand('insertHorizontalRule')">Divider</button>
                 <button id="export-pdf">Export PDF</button>
             </div>
+        </div>
+        <div class="main-content">
             <div id="notepad" contenteditable="true"></div>
         </div>
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar">
             <button id="add-sticky-note">+</button>
             <div id="sticky-notes-container"></div>
         </div>
     </div>
 
     <script>
-        const themeToggle = document.getElementById('theme-toggle');
+        const editorPanel = document.getElementById('editor-panel');
+        const sidebar = document.getElementById('sidebar');
         const notepad = document.getElementById('notepad');
         const stickyNotesContainer = document.getElementById('sticky-notes-container');
         const addStickyNoteButton = document.getElementById('add-sticky-note');
-        let isDarkMode = false;
-
-        themeToggle.addEventListener('click', () => {
-            if (isDarkMode) {
-                document.body.style.backgroundColor = '#f0f4f8';
-                document.body.style.color = '#2c3e50';
-                notepad.style.backgroundColor = '#ffffff';
-                notepad.style.color = '#2c3e50';
-                themeToggle.textContent = '🌓';
-            } else {
-                document.body.style.backgroundColor = '#121212';
-                document.body.style.color = '#ffffff';
-                notepad.style.backgroundColor = '#1e1e1e';
-                notepad.style.color = '#ffffff';
-                themeToggle.textContent = '☀️';
-            }
-            isDarkMode = !isDarkMode;
-        });
-
+        
         notepad.innerHTML = localStorage.getItem('noFussNote') || '';
 
         notepad.addEventListener('input', () => {
@@ -206,18 +182,21 @@
             document.execCommand('fontSize', false, size);
         }
 
-        function makeHeading() {
-            document.execCommand('fontSize', false, '6');
-            document.execCommand('bold', false, null);
+        function togglePanel() {
+            editorPanel.classList.toggle('closed');
         }
 
         addStickyNoteButton.addEventListener('click', () => {
             const stickyNote = document.createElement('div');
             stickyNote.className = 'sticky-note';
-            stickyNote.innerHTML = '<textarea placeholder="Type your note here..."></textarea>';
+            stickyNote.innerHTML = '<textarea placeholder="Type your note here..."></textarea><button class="delete-note" onclick="deleteStickyNote(this)">×</button>';
             stickyNote.style.backgroundColor = getRandomColor();
             stickyNotesContainer.appendChild(stickyNote);
         });
+
+        function deleteStickyNote(button) {
+            button.parentElement.remove();
+        }
 
         function getRandomColor() {
             const colors = ['#feff9c', '#fff740', '#ff65a3', '#7afcff', '#ff7eb9'];
@@ -233,7 +212,7 @@
             const splitText = doc.splitTextToSize(text, 180);
             
             doc.text(splitText, 15, 15);
-            doc.save('enhanced-no-fuss-notes.pdf');
+            doc.save('no-fuss-notes.pdf');
         });
     </script>
 </body>
