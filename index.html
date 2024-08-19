@@ -11,7 +11,7 @@
             margin: 0;
             font-family: Arial, sans-serif;
             background-color: #f0f4f8;
-            color: #2c3e50; /* Default text color */
+            color: #2c3e50;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
         .container {
@@ -62,7 +62,7 @@
             line-height: 1.6;
             resize: none;
             background-color: #ffffff;
-            color: #2c3e50; /* Default text color in notepad */
+            color: #2c3e50;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: background-color 0.3s ease, color 0.3s ease;
         }
@@ -74,7 +74,26 @@
             width: 30px;
             cursor: pointer;
         }
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+        #export-pdf {
+            background-color: #000000;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 14px;
+        }
+        #export-pdf:hover {
+            background-color: #333333;
+        }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -91,6 +110,9 @@
             </a>
         </div>
         <textarea id="notepad" placeholder="Start typing your notes here..."></textarea>
+        <div class="button-container">
+            <button id="export-pdf">Export as PDF</button>
+        </div>
     </div>
 
     <script>
@@ -100,27 +122,38 @@
         themeToggle.addEventListener('click', () => {
             if (isDarkMode) {
                 document.body.style.backgroundColor = '#f0f4f8';
-                document.body.style.color = '#2c3e50'; // Text color for light mode
+                document.body.style.color = '#2c3e50';
                 document.getElementById('notepad').style.backgroundColor = '#ffffff';
-                document.getElementById('notepad').style.color = '#2c3e50'; // Text color for light mode
-                themeToggle.src = 'sun.png'; // Path to sun image
+                document.getElementById('notepad').style.color = '#2c3e50';
+                themeToggle.src = 'sun.png';
             } else {
                 document.body.style.backgroundColor = '#2c3e50';
-                document.body.style.color = '#ffffff'; // Text color for dark mode
+                document.body.style.color = '#ffffff';
                 document.getElementById('notepad').style.backgroundColor = '#34495e';
-                document.getElementById('notepad').style.color = '#ffffff'; // Text color for dark mode
-                themeToggle.src = 'moon.png'; // Path to moon image
+                document.getElementById('notepad').style.color = '#ffffff';
+                themeToggle.src = 'moon.png';
             }
             isDarkMode = !isDarkMode;
         });
 
-        // Load saved note from localStorage
         const notepad = document.getElementById('notepad');
         notepad.value = localStorage.getItem('noFussNote') || '';
 
-        // Save note to localStorage whenever it changes
         notepad.addEventListener('input', () => {
             localStorage.setItem('noFussNote', notepad.value);
+        });
+
+        // PDF Export functionality
+        const exportButton = document.getElementById('export-pdf');
+        exportButton.addEventListener('click', () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const text = notepad.value;
+            const splitText = doc.splitTextToSize(text, 180);
+            
+            doc.text(splitText, 15, 15);
+            doc.save('no-fuss-notes.pdf');
         });
     </script>
 </body>
