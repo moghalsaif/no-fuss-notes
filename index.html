@@ -5,11 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>No Fuss Notes</title>
     <style>
+        :root {
+            --bg-color: #f0f4f8;
+            --text-color: #2c3e50;
+            --button-bg: #000000;
+            --button-hover: #333333;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode {
+            --bg-color: #333333;
+            --text-color: #f0f4f8;
+            --button-bg: #f0f4f8;
+            --button-hover: #cccccc;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
         body, html {
             height: 100%;
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #f0f4f8;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.5s, color 0.5s;
         }
         .container {
             display: flex;
@@ -29,22 +47,22 @@
         .title {
             font-size: 24px;
             font-weight: bold;
-            color: #2c3e50;
+            color: var(--text-color);
         }
-        .credit, .export-btn {
+        .credit, .export-btn, .mode-btn {
             display: flex;
             align-items: center;
             font-size: 14px;
-            color: #ffffff;
+            color: var(--text-color);
             text-decoration: none;
-            background-color: #000000;
+            background-color: var(--button-bg);
             padding: 8px 12px;
             border-radius: 20px;
             transition: background-color 0.3s ease;
             cursor: pointer;
         }
-        .credit:hover, .export-btn:hover {
-            background-color: #333333;
+        .credit:hover, .export-btn:hover, .mode-btn:hover {
+            background-color: var(--button-hover);
         }
         .credit svg {
             width: 16px;
@@ -55,6 +73,9 @@
         .export-btn {
             margin-right: 10px;
             border: none;
+        }
+        .mode-btn {
+            margin-right: 10px;
         }
         .header-right {
             display: flex;
@@ -69,7 +90,8 @@
             line-height: 1.6;
             resize: none;
             background-color: #ffffff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--box-shadow);
+            color: var(--text-color);
         }
         #notepad:focus {
             outline: none;
@@ -82,6 +104,14 @@
         <div class="header">
             <div class="title">no fuss notes</div>
             <div class="header-right">
+                <button class="mode-btn" onclick="toggleDarkMode()">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <g>
+                            <path d="M12 3.25a8.75 8.75 0 100 17.5 8.75 8.75 0 000-17.5zM2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12zm10 6.75a6.75 6.75 0 110-13.5 6.75 6.75 0 010 13.5z"></path>
+                        </g>
+                    </svg>
+                    Toggle Dark Mode
+                </button>
                 <button class="export-btn" onclick="exportNotes()">Export Notes</button>
                 <a href="https://x.com/moghalsaifa" target="_blank" class="credit">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -98,6 +128,7 @@
 
     <script>
         const notepad = document.getElementById('notepad');
+        const body = document.body;
 
         // Load saved note from localStorage
         notepad.value = localStorage.getItem('noFussNote') || '';
@@ -119,6 +150,11 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
+        }
+
+        // Function to toggle dark mode
+        function toggleDarkMode() {
+            body.classList.toggle('dark-mode');
         }
     </script>
 </body>
