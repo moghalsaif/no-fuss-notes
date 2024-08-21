@@ -5,29 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>No Fuss Notes</title>
     <style>
-        :root {
-            --bg-color: #f0f4f8;
-            --text-color: #2c3e50;
-            --button-bg: #000000;
-            --button-hover: #333333;
-            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .dark-mode {
-            --bg-color: #333333;
-            --text-color: #f0f4f8;
-            --button-bg: #f0f4f8;
-            --button-hover: #cccccc;
-            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-
         body, html {
             height: 100%;
             margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            transition: background-color 0.5s, color 0.5s;
+            font-family: 'Sans-serif'; /* Apply Sans-serif font */
+            background-color: #f0f4f8;
+            color: #2c3e50; /* Default text color */
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         .container {
             display: flex;
@@ -47,39 +31,26 @@
         .title {
             font-size: 24px;
             font-weight: bold;
-            color: var(--text-color);
         }
-        .credit, .export-btn, .mode-btn {
+        .credit {
             display: flex;
             align-items: center;
             font-size: 14px;
-            color: var(--text-color);
+            color: #ffffff;
             text-decoration: none;
-            background-color: var(--button-bg);
+            background-color: #000000;
             padding: 8px 12px;
             border-radius: 20px;
             transition: background-color 0.3s ease;
-            cursor: pointer;
         }
-        .credit:hover, .export-btn:hover, .mode-btn:hover {
-            background-color: var(--button-hover);
+        .credit:hover {
+            background-color: #333333;
         }
         .credit svg {
             width: 16px;
             height: 16px;
             margin-right: 6px;
             fill: currentColor;
-        }
-        .export-btn {
-            margin-right: 10px;
-            border: none;
-        }
-        .mode-btn {
-            margin-right: 10px;
-        }
-        .header-right {
-            display: flex;
-            align-items: center;
         }
         #notepad {
             flex-grow: 1;
@@ -90,12 +61,17 @@
             line-height: 1.6;
             resize: none;
             background-color: #ffffff;
-            box-shadow: var(--box-shadow);
-            color: var(--text-color);
+            color: #2c3e50; /* Default text color in notepad */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         #notepad:focus {
             outline: none;
             box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+        }
+        #theme-toggle {
+            width: 30px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -103,59 +79,48 @@
     <div class="container">
         <div class="header">
             <div class="title">no fuss notes</div>
-            <div class="header-right">
-                <button class="mode-btn" onclick="toggleDarkMode()">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <g>
-                            <path d="M12 3.25a8.75 8.75 0 100 17.5 8.75 8.75 0 000-17.5zM2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12zm10 6.75a6.75 6.75 0 110-13.5 6.75 6.75 0 010 13.5z"></path>
-                        </g>
-                    </svg>
-                    Toggle Dark Mode
-                </button>
-                <button class="export-btn" onclick="exportNotes()">Export Notes</button>
-                <a href="https://x.com/moghalsaifa" target="_blank" class="credit">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <g>
-                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
-                        </g>
-                    </svg>
-                    built by @moghalsaifa
-                </a>
-            </div>
+            <img id="theme-toggle" src="sun.png" alt="Toggle Theme">
+            <a href="https://x.com/moghalsaifa" target="_blank" class="credit">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <g>
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+                    </g>
+                </svg>
+                built by @moghalsaifa
+            </a>
         </div>
         <textarea id="notepad" placeholder="Start typing your notes here..."></textarea>
     </div>
 
     <script>
-        const notepad = document.getElementById('notepad');
-        const body = document.body;
+        const themeToggle = document.getElementById('theme-toggle');
+        let isDarkMode = false;
+
+        themeToggle.addEventListener('click', () => {
+            if (isDarkMode) {
+                document.body.style.backgroundColor = '#f0f4f8';
+                document.body.style.color = '#2c3e50'; // Text color for light mode
+                document.getElementById('notepad').style.backgroundColor = '#ffffff';
+                document.getElementById('notepad').style.color = '#2c3e50'; // Text color for light mode
+                themeToggle.src = 'sun.png'; // Path to sun image
+            } else {
+                document.body.style.backgroundColor = '#2c3e50';
+                document.body.style.color = '#ffffff'; // Text color for dark mode
+                document.getElementById('notepad').style.backgroundColor = '#34495e';
+                document.getElementById('notepad').style.color = '#ffffff'; // Text color for dark mode
+                themeToggle.src = 'moon.png'; // Path to moon image
+            }
+            isDarkMode = !isDarkMode;
+        });
 
         // Load saved note from localStorage
+        const notepad = document.getElementById('notepad');
         notepad.value = localStorage.getItem('noFussNote') || '';
 
         // Save note to localStorage whenever it changes
         notepad.addEventListener('input', () => {
             localStorage.setItem('noFussNote', notepad.value);
         });
-
-        // Function to export notes
-        function exportNotes() {
-            const text = notepad.value;
-            const blob = new Blob([text], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'my_notes.txt';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        // Function to toggle dark mode
-        function toggleDarkMode() {
-            body.classList.toggle('dark-mode');
-        }
     </script>
 </body>
 </html>
